@@ -1,32 +1,38 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const Blockchain = require('./blockchain');
+const express = require("express");
+const bodyParser = require("body-parser");
+const Blockchain = require("./blockchain");
 
 const app = express();
 const PORT = 3000;
-const foodChain = new Blockchain();
+const chain = new Blockchain();
+
 
 app.use(bodyParser.json());
-app.use(express.static(__dirname)); // serve HTML/JS
+app.use(express.static(__dirname));
 
-// Place an order
-app.post('/order', (req, res) => {
-    const { studentName, foodItems, quantity } = req.body;
-    if (!studentName || !foodItems) return res.status(400).send("Invalid order data");
+app.post("/order", (req, res) => {
+  console.log("📥 Incoming:", req.body);
 
-    const order = { studentName, foodItems, quantity };
-    const orderHash = foodChain.placeOrder(order);
-    res.json({ orderHash });
+  const { studentName, foodItems, quantity } = req.body;
+
+  if (!studentName || !foodItems || foodItems.length === 0) {
+    return res.status(400).json({ error: "Invalid data" });
+  }
+
+  const order = { studentName, foodItems, quantity, time: new Date().toISOString() };
+
+  const hash = chain.placeOrder(order);
+  console.log("🔐 Generated hash:", hash);
+
+  res.json({ orderHash: hash });
 });
 
-// Delivery man checks order
-app.get('/order/:hash', (req, res) => {
-    const hash = req.params.hash;
-    const order = foodChain.findOrder(hash);
-    if (!order) return res.status(404).send("Order not found");
-    res.json(order);
+app.get("/order/:hash", (req, res) => {
+  const order = chain.findOrder(req.params.hash);
+  if (!order) return res.status(404).json({ error: "Order not found" });
+  res.json(order);
 });
 
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  console.log("🚀 Server running at http://localhost:" + PORT);
 });

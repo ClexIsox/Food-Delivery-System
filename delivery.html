@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Delivery Man</title>
-    <link rel="stylesheet" href="style.css">
+  <title>Delivery Page</title>
+   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Check Order</h1>
-    <input id="orderHash" placeholder="Enter Order ID"><br><br>
-    <button onclick="checkOrder()">Check Order</button>
-    <pre id="result"></pre>
+  <h2>Delivery Man - Check Order</h2>
 
-    <script src="delivery.js"></script>
+  <input id="orderHash" placeholder="Paste Order Hash Here" />
+  <button onclick="checkOrder()">Check Order</button>
+
+  <div id="orderCard" style="margin-top:20px;"></div>
+
+  <script src="delivery.js"></script> 
 </body>
 </html>

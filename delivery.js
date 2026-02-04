@@ -1,10 +1,31 @@
 async function checkOrder() {
-    const orderHash = document.getElementById('orderHash').value;
-    const res = await fetch(`/order/${orderHash}`);
-    if (res.status === 404) {
-        document.getElementById('result').innerText = "Order not found!";
-        return;
+  const hash = document.getElementById("orderHash").value.trim();
+  const card = document.getElementById("orderCard");
+
+  if (!hash) {
+    alert("Please paste an Order Hash!");
+    return;
+  }
+
+  try {
+    const res = await fetch("/order/" + hash);
+
+    if (!res.ok) {
+      card.innerHTML = "❌ Order not found!";
+      return;
     }
+
     const order = await res.json();
-    document.getElementById('result').innerText = JSON.stringify(order, null, 2);
+
+    card.innerHTML = `
+      <h3>📦 Order Details</h3>
+      <p><b>Student:</b> ${order.studentName}</p>
+      <p><b>Food:</b> ${order.foodItems.join(", ")}</p>
+      <p><b>Quantity:</b> ${order.quantity}</p>
+      <p><b>Time:</b> ${order.time}</p>
+    `;
+  } catch (err) {
+    console.error(err);
+    card.innerHTML = "❌ Server error!";
+  }
 }
